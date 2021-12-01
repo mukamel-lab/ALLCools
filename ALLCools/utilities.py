@@ -360,6 +360,11 @@ def tabix_allc(allc_path, reindex=False):
     """
     if os.path.exists(f'{allc_path}.tbi') and not reindex:
         return
+
+    # EAM: Run bgzip if it hasn't been done
+    if not (allc_path.split('.')[-1].lower() in ['gz','bgz','gzip']):
+        run(shlex.split(f'bgzip -f {allc_path}')) # Note: Force overwrite of existing .gz file
+        allc_path=allc_path+'.gz'
     run(shlex.split(f'tabix -f -b 2 -e 2 -s 1 {allc_path}'),
         check=True)
     return
